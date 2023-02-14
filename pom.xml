@@ -12,11 +12,14 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>renren-generator</module>
+        <module>renren-fast</module>
         <module>coupon</module>
         <module>member</module>
         <module>order</module>
         <module>product</module>
         <module>ware</module>
+        <module>common</module>
     </modules>
 
 
