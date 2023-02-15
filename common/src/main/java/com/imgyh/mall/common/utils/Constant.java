@@ -6,7 +6,7 @@
  * 版权所有，侵权必究！
  */
 
-package com.imgyh.common.utils;
+package com.imgyh.mall.common.utils;
 
 
 import java.util.Optional;

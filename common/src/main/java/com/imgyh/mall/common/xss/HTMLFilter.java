@@ -1,4 +1,4 @@
-package com.imgyh.common.xss;
+package com.imgyh.mall.common.xss;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

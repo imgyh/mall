@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.imgyh.mall.ware.entity.PurchaseEntity;
 import com.imgyh.mall.ware.service.PurchaseService;
-import com.imgyh.common.utils.PageUtils;
-import com.imgyh.common.utils.R;
+import com.imgyh.mall.common.utils.PageUtils;
+import com.imgyh.mall.common.utils.R;
 
 
 

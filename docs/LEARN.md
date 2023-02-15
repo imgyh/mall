@@ -1,0 +1,230 @@
+# 版本说明
+
+版本选择参考: https://github.com/alibaba/spring-cloud-alibaba/wiki/%E7%89%88%E6%9C%AC%E8%AF%B4%E6%98%8E
+
+Spring Cloud Alibaba: https://spring-cloud-alibaba-group.github.io/github-pages/2021/zh-cn/index.html
+
+|         组件         |    版本    |
+| :------------------: | :--------: |
+| Spring Cloud Alibaba | 2021.0.4.0 |
+|     Spring Cloud     |  2021.0.4  |
+|     Spring Boot      |   2.6.11   |
+|       Sentinel       |   1.8.5    |
+|        Nacos         |   2.0.4    |
+|        Seata         |   1.5.2    |
+
+
+
+# [Nacos](https://nacos.io/zh-cn/docs/quick-start.html)作为服务注册中心
+
+1. 下载[Nacos Server](https://github.com/alibaba/nacos/releases)并运行, Nacos Server 启动后，进入 http://ip:8848 查看控制台(默认账号名/密码为 nacos/nacos)
+2. POM
+   ```
+   <dependency>
+       <groupId>com.alibaba.cloud</groupId>
+       <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+   </dependency>
+   ```
+3. YML--application.yml
+   ```
+   # 应用服务 WEB 访问端口
+   server:
+     port: 8040
+   
+   spring:
+     application:
+       # 应用名称
+       name: product
+     cloud:
+       nacos:
+         discovery:
+           server-addr: 127.0.0.1:8848 # nacos地址
+   
+   management:
+     endpoints:
+       web:
+         exposure:
+           include: '*' # 一定要加引号，不然解析YML会出错
+   ```
+4. 主启动
+   ```
+   @SpringBootApplication
+   // 服务注册
+   @EnableDiscoveryClient
+   public class Application {}
+   ```
+
+# [OpenFeign](https://docs.spring.io/spring-cloud-openfeign/docs/3.1.4/reference/html/)远程调用
+
+在保证服务注册的前提下, 进行服务远程调用
+
+1. POM
+   ```
+   <dependency>
+       <groupId>org.springframework.cloud</groupId>
+       <artifactId>spring-cloud-starter-openfeign</artifactId>
+   </dependency>
+   ```
+2. 主启动
+   ```
+   @SpringBootApplication
+   // 服务注册
+   @EnableDiscoveryClient
+   // Feign
+   @EnableFeignClients
+   public class Application {}
+   ```
+3. 业务类--调用者 MembertestController 调用 ProducttestController
+   ```
+   @RestController
+   public class MembertestController {
+       @Resource
+       ProductFeignService productFeignService;
+   
+       @GetMapping("/test")
+       String member(){
+           return productFeignService.product();
+       }
+   
+   }
+   
+   // product 为调用者的 spring.application.name
+   @FeignClient("product")
+   // 交给 Bean 容器 管理
+   @Component
+   public interface ProductFeignService {
+       @GetMapping("/product")
+       String product();
+   }
+   ```
+4. 业务类--被调用者
+   ```
+   @RestController
+   public class ProducttestController {
+       @GetMapping("/product")
+       String product(){
+           return "product";
+       }
+   }
+   ```
+
+5. 报错提示使用loadbalancer, openfeign取消依赖Ribbon, 需要手动添加loadbalancer或者Ribbon. 据说Ribbon已经被弃用了, 许多组件都不依赖Ribbon, Nacos也没依赖Ribbon, 建议使用loadbalancer
+
+   ```
+   <!-- 负载均衡 -->
+   <dependency>
+   	<groupId>org.springframework.cloud</groupId>
+   	<artifactId>spring-cloud-loadbalancer</artifactId>
+   </dependency>
+   ```
+
+6. YML--application.yml, 开启loadbalancer
+
+   ```
+   # 应用服务 WEB 访问端口
+   server:
+     port: 8020
+   
+   spring:
+     application:
+       # 应用名称
+       name: member
+     cloud:
+       nacos:
+         discovery:
+           server-addr: 127.0.0.1:8848 # nacos地址
+       loadbalancer:
+         nacos:
+           enabled: true # 开启loadbalancer
+   
+   management:
+     endpoints:
+       web:
+         exposure:
+           include: '*'
+   ```
+
+7. 报错Server check fail, please check server localhost ,port 9848 is available , error ={}, 但是服务正常. 
+
+# Nacos作为配置中心
+
+1. POM
+
+   ```
+   <dependency>
+       <groupId>com.alibaba.cloud</groupId>
+       <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+   </dependency>
+   ```
+
+2. YML--bootstrap.yml, 只需要将下面的两个配置写进bootstrap.yml, 其余的可以写在bootstrap.yml或者application.yml
+
+   ```
+   # DataId 默认使用 `spring.application.name` 配置跟文件扩展名结合(配置格式默认使用 properties), GROUP 不配置默认使用 DEFAULT_GROUP。因此该配置文件对应的 Nacos Config 配置的 DataId 为 product.properties, GROUP 为 DEFAULT_GROUP
+   spring:
+     application:
+       # 应用名称
+       name: product
+     cloud:
+       nacos:
+         config:
+           server-addr: 127.0.0.1:8848 # nacos地址
+   ```
+
+3. 报错No spring.config.import property has been defined, 导入spring-cloud-starter-bootstrap
+
+   ```
+   <dependency>
+       <groupId>org.springframework.cloud</groupId>
+       <artifactId>spring-cloud-starter-bootstrap</artifactId>
+   </dependency>
+   ```
+
+4. 更多设置, 作为配置中心时, 每个微服务创建自己的namespace 进行隔离，group 来区分dev，beta，prod 等环境, 同样的在服务发现中也可以设置namespace 和group, 但是服务注册的时候每个微服务设置不同的 namespace或者不同的group 就不能相互调用，所以要相互调用就应该放在同一个namespace和同一个group下, 所以不建议设置, 使用默认就好.
+
+   ```
+   # 该配置文件对应的 Nacos Config 配置的 DataId 为 product.yml, GROUP 为 dev
+   spring:
+     cloud:
+         config:
+           file-extension: yml # 声明 DataId 文件扩展名
+           namespace: 22df9f01-f9f8-4c71-8819-87e2e0fbc80e # 区分每个微服务
+           group: dev # 区分开发环境
+   ```
+
+5. 使用在Controller类上使用 @RefreshScope 动态刷新配置文件, 可以获取实时修改配置文件后内容. 使用@Value("${键}")获取配置值
+
+   ```
+   @RestController
+   @RefreshScope
+   public class CoupontestController {
+       @Value("${profilename}")
+       String profilename;
+   
+       @GetMapping("/profilename")
+       String getProfileName(){
+           return profilename;
+       }
+   }
+   ```
+
+   # Nacos使用MySQL作为数据源
+   
+   https://nacos.io/zh-cn/docs/v2/guide/admin/deployment.html
+   
+   - 1.安装数据库，版本要求：5.6.5+
+   
+   - 2.建立数据库名字为nacos, 初始化mysql数据库，数据库初始化文件：nacos-mysql.sql
+   
+   - 3.修改conf/application.properties文件，增加支持mysql数据源配置（目前只支持mysql），添加mysql数据源的url、用户名和密码。
+   
+     ```
+     spring.datasource.platform=mysql
+     
+     db.num=1
+     db.url.0=jdbc:mysql://127.0.0.1:3306/nacos_devtest?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true
+     db.user.0=root
+     db.password.0=123456
+     ```
+   
+     

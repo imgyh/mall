@@ -1,7 +1,7 @@
 package com.imgyh.mall.coupon.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.imgyh.common.utils.PageUtils;
+import com.imgyh.mall.common.utils.PageUtils;
 import com.imgyh.mall.coupon.entity.MemberPriceEntity;
 
 import java.util.Map;

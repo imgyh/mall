@@ -6,10 +6,10 @@
  * 版权所有，侵权必究！
  */
 
-package com.imgyh.common.xss;
+package com.imgyh.mall.common.xss;
 
 
-import com.imgyh.common.exception.RRException;
+import com.imgyh.mall.common.exception.RRException;
 import org.apache.commons.lang.StringUtils;
 
 /**

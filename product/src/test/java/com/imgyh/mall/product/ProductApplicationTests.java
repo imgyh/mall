@@ -5,6 +5,8 @@ import com.imgyh.mall.product.entity.BrandEntity;
 import com.imgyh.mall.product.service.BrandService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
