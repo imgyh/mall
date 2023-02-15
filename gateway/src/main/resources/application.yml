@@ -1,0 +1,8 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: query_route_test
+          uri: https://www.imgyh.com
+          predicates:
+            - Query=blog # 网址中带有blog参数就跳到https://www.imgyh.com

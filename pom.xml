@@ -20,6 +20,7 @@
         <module>product</module>
         <module>ware</module>
         <module>common</module>
+        <module>gateway</module>
     </modules>
 
 

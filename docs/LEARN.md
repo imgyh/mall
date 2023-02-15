@@ -19,13 +19,16 @@ Spring Cloud Alibaba: https://spring-cloud-alibaba-group.github.io/github-pages/
 
 1. 下载[Nacos Server](https://github.com/alibaba/nacos/releases)并运行, Nacos Server 启动后，进入 http://ip:8848 查看控制台(默认账号名/密码为 nacos/nacos)
 2. POM
+
    ```
    <dependency>
        <groupId>com.alibaba.cloud</groupId>
        <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
    </dependency>
    ```
+   
 3. YML--application.yml
+
    ```
    # 应用服务 WEB 访问端口
    server:
@@ -46,7 +49,9 @@ Spring Cloud Alibaba: https://spring-cloud-alibaba-group.github.io/github-pages/
          exposure:
            include: '*' # 一定要加引号，不然解析YML会出错
    ```
+   
 4. 主启动
+
    ```
    @SpringBootApplication
    // 服务注册
@@ -59,13 +64,16 @@ Spring Cloud Alibaba: https://spring-cloud-alibaba-group.github.io/github-pages/
 在保证服务注册的前提下, 进行服务远程调用
 
 1. POM
+
    ```
    <dependency>
        <groupId>org.springframework.cloud</groupId>
        <artifactId>spring-cloud-starter-openfeign</artifactId>
    </dependency>
    ```
+   
 2. 主启动
+
    ```
    @SpringBootApplication
    // 服务注册
@@ -74,7 +82,9 @@ Spring Cloud Alibaba: https://spring-cloud-alibaba-group.github.io/github-pages/
    @EnableFeignClients
    public class Application {}
    ```
+   
 3. 业务类--调用者 MembertestController 调用 ProducttestController
+
    ```
    @RestController
    public class MembertestController {
@@ -97,7 +107,9 @@ Spring Cloud Alibaba: https://spring-cloud-alibaba-group.github.io/github-pages/
        String product();
    }
    ```
+   
 4. 业务类--被调用者
+
    ```
    @RestController
    public class ProducttestController {
@@ -113,8 +125,8 @@ Spring Cloud Alibaba: https://spring-cloud-alibaba-group.github.io/github-pages/
    ```
    <!-- 负载均衡 -->
    <dependency>
-   	<groupId>org.springframework.cloud</groupId>
-   	<artifactId>spring-cloud-loadbalancer</artifactId>
+       <groupId>org.springframework.cloud</groupId>
+       <artifactId>spring-cloud-loadbalancer</artifactId>
    </dependency>
    ```
 
@@ -208,23 +220,158 @@ Spring Cloud Alibaba: https://spring-cloud-alibaba-group.github.io/github-pages/
    }
    ```
 
-   # Nacos使用MySQL作为数据源
+6. YML--bootstrap.yml. 服务注册与发现、配置中心、远程调用的配置. 这里将这三个有关的统一写在了bootstrap.yml
+
+   ```
+   # 应用服务 WEB 访问端口
+   server:
+     port: 8040
    
-   https://nacos.io/zh-cn/docs/v2/guide/admin/deployment.html
+   spring:
+     application:
+       # 应用名称
+       name: product
+     cloud:
+       nacos:
+         discovery:
+           server-addr: 127.0.0.1:8848 # nacos地址
+         config:
+           server-addr: 127.0.0.1:8848 # nacos地址
+           file-extension: yml # 声明 DataId 文件扩展名
+           namespace: 2dab789d-8527-444a-8e67-9d5970b9a573 # 区分每个微服务
+           group: dev # 区分开发环境
+       loadbalancer:
+         nacos:
+           enabled: true # 开启loadbalancer
    
-   - 1.安装数据库，版本要求：5.6.5+
+   management:
+     endpoints:
+       web:
+         exposure:
+           include: '*' # 一定要加引号，不然解析YML会出错
+   ```
+
+7. POM. 服务注册与发现、配置中心、远程调用的配置POM. 
+
+   ```
+   <!-- nacos 服务注册 -->
+   <dependency>
+       <groupId>com.alibaba.cloud</groupId>
+       <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+   </dependency>
+   <!-- 远程调用 -->
+   <dependency>
+       <groupId>org.springframework.cloud</groupId>
+       <artifactId>spring-cloud-starter-openfeign</artifactId>
+   </dependency>
+   <!-- 负载均衡 -->
+   <dependency>
+       <groupId>org.springframework.cloud</groupId>
+       <artifactId>spring-cloud-loadbalancer</artifactId>
+   </dependency>
    
-   - 2.建立数据库名字为nacos, 初始化mysql数据库，数据库初始化文件：nacos-mysql.sql
+   <!-- nacos 配置中心 -->
+   <dependency>
+       <groupId>com.alibaba.cloud</groupId>
+       <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+   </dependency>
    
-   - 3.修改conf/application.properties文件，增加支持mysql数据源配置（目前只支持mysql），添加mysql数据源的url、用户名和密码。
-   
-     ```
-     spring.datasource.platform=mysql
+   <dependency>
+       <groupId>org.springframework.cloud</groupId>
+       <artifactId>spring-cloud-starter-bootstrap</artifactId>
+   </dependency>
+   ```
+
+# Nacos使用MySQL作为数据源
+
+https://nacos.io/zh-cn/docs/v2/guide/admin/deployment.html
+
+- 1.安装数据库，版本要求：5.6.5+
+  
+- 2.建立数据库名字为nacos, 初始化mysql数据库，数据库初始化文件：nacos-mysql.sql
+  
+- 3.修改conf/application.properties文件，增加支持mysql数据源配置（目前只支持mysql），添加mysql数据源的url、用户名和密码。
+  
+   ```
+   spring.datasource.platform=mysql
      
-     db.num=1
-     db.url.0=jdbc:mysql://127.0.0.1:3306/nacos_devtest?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true
-     db.user.0=root
-     db.password.0=123456
-     ```
+   db.num=1
+   db.url.0=jdbc:mysql://127.0.0.1:3306/nacos_devtest?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true
+   db.user.0=root
+   db.password.0=123456
+   ```
+
+# Gateway网关
+
+网关也要接入nacos进行注册与配置, 不需要远程调用openFeign
+
+1. POM
+
+   ```
+   <!-- nacos 服务注册 -->
+   <dependency>
+       <groupId>com.alibaba.cloud</groupId>
+       <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+   </dependency>
    
-     
+   <!-- nacos 配置中心 -->
+   <dependency>
+       <groupId>com.alibaba.cloud</groupId>
+       <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+   </dependency>
+   
+   <dependency>
+       <groupId>org.springframework.cloud</groupId>
+       <artifactId>spring-cloud-starter-bootstrap</artifactId>
+   </dependency>
+   
+   <!-- 网关 -->
+   <dependency>
+       <groupId>org.springframework.cloud</groupId>
+       <artifactId>spring-cloud-starter-gateway</artifactId>
+   </dependency>
+   
+   ```
+
+2. YML--bootstrap.yml
+
+   ```
+   # 应用服务 WEB 访问端口
+   server:
+     port: 88
+   
+   spring:
+     application:
+       # 应用名称
+       name: gateway
+     cloud:
+       nacos:
+         discovery:
+           server-addr: 127.0.0.1:8848 # nacos地址
+         config:
+           server-addr: 127.0.0.1:8848 # nacos地址
+           file-extension: yml # 声明 DataId 文件扩展名
+           namespace: dff25d3e-c187-42d6-b6dc-a3c7afae1264 # 区分每个微服务
+           group: dev # 区分开发环境
+   
+   management:
+     endpoints:
+       web:
+         exposure:
+           include: '*' # 一定要加引号，不然解析YML会出错
+   ```
+
+3. YML--application.yml gateway的简单使用
+
+   ```
+   spring:
+     cloud:
+       gateway:
+         routes:
+           - id: query_route_test
+             uri: https://www.imgyh.com
+             predicates:
+               - Query=blog # 网址中带有blog参数就跳到
+   ```
+
+   

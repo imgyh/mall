@@ -1,7 +1,3 @@
-**/mvnw
-**/mvnw.cmd
-**/HELP.md
-**/.mvn
 **/target/
 **/*.iml
 .idea
