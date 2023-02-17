@@ -1,20 +1,15 @@
 package com.imgyh.mall.product.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-//import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.imgyh.mall.product.entity.CategoryEntity;
-import com.imgyh.mall.product.service.CategoryService;
 import com.imgyh.mall.common.utils.PageUtils;
 import com.imgyh.mall.common.utils.R;
+import com.imgyh.mall.product.entity.CategoryEntity;
+import com.imgyh.mall.product.service.CategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -85,6 +80,14 @@ public class CategoryController {
 		categoryService.removeByIds(Arrays.asList(catIds));
 
         return R.ok();
+    }
+
+//    以树形结构显示商品分类
+    @GetMapping("/list/tree")
+    public R listTree(){
+        List<CategoryEntity> entities = categoryService.listTree();
+
+        return R.ok().put("data", entities);
     }
 
 }
