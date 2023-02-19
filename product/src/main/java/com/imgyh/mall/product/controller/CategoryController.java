@@ -34,7 +34,7 @@ public class CategoryController {
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = categoryService.queryPage(params);
 
-        return R.ok().put("page", page);
+        return R.ok().put("data", page);
     }
 
 
@@ -46,7 +46,7 @@ public class CategoryController {
     public R info(@PathVariable("catId") Long catId){
 		CategoryEntity category = categoryService.getById(catId);
 
-        return R.ok().put("category", category);
+        return R.ok().put("data", category);
     }
 
     /**
@@ -88,6 +88,15 @@ public class CategoryController {
         List<CategoryEntity> entities = categoryService.listTree();
 
         return R.ok().put("data", entities);
+    }
+
+//    批量删除
+    @PostMapping("/delete/batch")
+    public R deleteBatch(@RequestBody Long[] catIds){
+        // TODO 检查是否能删除
+        categoryService.removeCategoryByIds(Arrays.asList(catIds));
+
+        return R.ok();
     }
 
 }
