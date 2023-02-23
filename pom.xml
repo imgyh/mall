@@ -21,6 +21,7 @@
         <module>ware</module>
         <module>common</module>
         <module>gateway</module>
+        <module>thirdparty</module>
     </modules>
 
 
@@ -32,9 +33,9 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
-        <spring-boot.version>2.6.11</spring-boot.version>
-        <spring-cloud.version>2021.0.4</spring-cloud.version>
-        <spring-cloud-alibaba.version>2021.0.4.0</spring-cloud-alibaba.version>
+        <spring-boot.version>2.6.3</spring-boot.version>
+        <spring-cloud.version>2021.0.1</spring-cloud.version>
+        <spring-cloud-alibaba.version>2021.0.1.0</spring-cloud-alibaba.version>
 
         <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
         <mysql.version>8.0.32</mysql.version>
