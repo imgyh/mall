@@ -10,8 +10,7 @@ import com.imgyh.mall.product.entity.CategoryEntity;
 import com.imgyh.mall.product.service.CategoryService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -53,6 +52,27 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         // 逻辑删除
         baseMapper.deleteBatchIds(asList);
     }
+
+    @Override
+    public List<Long> findCatelogPath(Long catelogId) {
+        List<Long> list = new ArrayList<>();
+        this.findParent(catelogId, list);
+        // 找到的父分类id是[子,父,爷], 将其逆序
+        Collections.reverse(list);
+
+        return list;
+    }
+
+    // 递归查找父分类的id
+    private void findParent(Long catelogId, List<Long> list) {
+        // 收集id
+        list.add(catelogId);
+        CategoryEntity category = this.getById(catelogId);
+        if (category.getParentCid() != 0){
+            findParent(category.getParentCid(),list);
+        }
+    }
+
 
     // 递归获取某个分类的子分类
     private List<CategoryEntity> getChildren(CategoryEntity entity, List<CategoryEntity> entities) {
