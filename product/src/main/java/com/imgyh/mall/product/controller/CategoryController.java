@@ -61,12 +61,13 @@ public class CategoryController {
     }
 
     /**
-     * 修改
+     * 修改 不仅更新自己这张表，还要更新跟自己关联的表比如 pms_category_brand_relation 这张表用到了自己这张表的字段
      */
     @RequestMapping("/update")
     //@RequiresPermissions("product:category:update")
     public R update(@RequestBody CategoryEntity category){
-		categoryService.updateById(category);
+//		categoryService.updateById(category);
+        categoryService.updateAllRelatedTable(category);
 
         return R.ok();
     }

@@ -78,13 +78,13 @@ public class BrandController {
     }
 
     /**
-     * 修改
+     * 修改 不仅更新自己这张表，还要更新跟自己关联的表比如 pms_category_brand_relation 这张表用到了自己这张表的字段
      */
     @RequestMapping("/update")
     //@RequiresPermissions("product:brand:update")
     public R update(@Validated(UpdateGroup.class)@RequestBody BrandEntity brand){
-		brandService.updateById(brand);
-
+//		brandService.updateById(brand);
+        brandService.updateAllRelatedTable(brand);
         return R.ok();
     }
 

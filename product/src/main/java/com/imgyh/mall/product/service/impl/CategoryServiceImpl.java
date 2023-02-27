@@ -7,9 +7,13 @@ import com.imgyh.mall.common.utils.PageUtils;
 import com.imgyh.mall.common.utils.Query;
 import com.imgyh.mall.product.dao.CategoryDao;
 import com.imgyh.mall.product.entity.CategoryEntity;
+import com.imgyh.mall.product.service.CategoryBrandRelationService;
 import com.imgyh.mall.product.service.CategoryService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -17,6 +21,8 @@ import java.util.stream.Collectors;
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
 
+    @Resource
+    private CategoryBrandRelationService categoryBrandRelationService;
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<CategoryEntity> page = this.page(
@@ -61,6 +67,18 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         Collections.reverse(list);
 
         return list;
+    }
+
+    // 更新自己这张表和其他相关的表
+    @Transactional
+    @Override
+    public void updateAllRelatedTable(CategoryEntity category) {
+        // 更新自己这张表
+        this.updateById(category);
+        // TODO 同步更新其他关联表中的数据
+        if (!StringUtils.isEmpty(category.getName())) {
+            categoryBrandRelationService.updateCatelogName(category.getCatId(), category.getName());
+        }
     }
 
     // 递归查找父分类的id
