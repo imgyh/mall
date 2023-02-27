@@ -29,29 +29,29 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
     /**
      *
      * 根据传入的 catelogId(三级分类中的第三级子分类的id) 查询该 catelogId 下所有的属性值, 并分页返回
-     * 如果 catelogId==0则返回全部属性
+     * 如果 catelogId==0则返回全部属性, 同时能模糊查询
      */
     @Override
     public PageUtils queryPage(Map<String, Object> params, Long catelogId) {
-        if (catelogId == 0){
-            return this.queryPage(params);
-        }else {
-            String key = (String)params.get("key");
-            QueryWrapper<AttrGroupEntity> wrapper = new QueryWrapper<AttrGroupEntity>().eq("catelog_id", catelogId);
-            // select * from pms_attr_group where catelog_id=? and (attr_group_id=key or attr_group_name like key)
-            // 这个可以根据传入的 key 进一步查找
-            if (key != null && !key.isEmpty()){
-                wrapper.and((obj)->{
-                    obj.eq("attr_group_id",key).or().like("attr_group_name",key);
-                });
-            }
-            IPage<AttrGroupEntity> page = this.page(
-                    new Query<AttrGroupEntity>().getPage(params),
-                    wrapper
-            );
-
-            return new PageUtils(page);
+        String key = (String)params.get("key");
+        QueryWrapper<AttrGroupEntity> wrapper = new QueryWrapper<AttrGroupEntity>();
+        // select * from pms_attr_group where catelog_id=? and (attr_group_id=key or attr_group_name like key)
+        // 这个可以根据传入的 key 进一步查找
+        if (key != null && !key.isEmpty()){
+            wrapper.and((obj)->{
+                obj.eq("attr_group_id",key).or().like("attr_group_name",key);
+            });
         }
+        if (catelogId != 0){
+            wrapper.eq("catelog_id", catelogId);
+        }
+
+        IPage<AttrGroupEntity> page = this.page(
+                new Query<AttrGroupEntity>().getPage(params),
+                wrapper
+        );
+
+        return new PageUtils(page);
     }
 
 }
