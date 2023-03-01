@@ -2,6 +2,7 @@ package com.imgyh.mall.product.controller;
 
 import com.imgyh.mall.common.utils.PageUtils;
 import com.imgyh.mall.common.utils.R;
+import com.imgyh.mall.product.entity.AttrAttrgroupRelationEntity;
 import com.imgyh.mall.product.entity.AttrEntity;
 import com.imgyh.mall.product.entity.AttrGroupEntity;
 import com.imgyh.mall.product.service.AttrAttrgroupRelationService;
@@ -106,6 +107,14 @@ public class AttrGroupController {
         // 去 attrAttrGroupRelation 表中找
         List<AttrEntity> data = attrAttrgroupRelationService.listAttrRelation(attrgroupId);
         return R.ok().put("data",data);
+    }
+
+    // 删除属性与分组的关联关系
+    @PostMapping("/attr/relation/delete")
+    public R deleteAttrRelation(@RequestBody List<AttrAttrgroupRelationEntity> attrAttrgroupRelationEntityList){
+        // 去 attrAttrGroupRelation 表中删除
+        attrAttrgroupRelationService.deleteAttrRelation(attrAttrgroupRelationEntityList);
+        return R.ok();
     }
 
 }

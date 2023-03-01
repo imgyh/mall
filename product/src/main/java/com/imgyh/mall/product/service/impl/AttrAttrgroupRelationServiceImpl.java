@@ -44,4 +44,9 @@ public class AttrAttrgroupRelationServiceImpl extends ServiceImpl<AttrAttrgroupR
         return attrEntities;
     }
 
+    @Override
+    public void deleteAttrRelation(List<AttrAttrgroupRelationEntity> attrAttrgroupRelationEntityList) {
+        attrDao.deleteAttrRelation(attrAttrgroupRelationEntityList);
+    }
+
 }

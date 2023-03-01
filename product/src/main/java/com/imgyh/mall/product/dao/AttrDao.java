@@ -1,8 +1,12 @@
 package com.imgyh.mall.product.dao;
 
+import com.imgyh.mall.product.entity.AttrAttrgroupRelationEntity;
 import com.imgyh.mall.product.entity.AttrEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 商品属性
@@ -13,5 +17,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface AttrDao extends BaseMapper<AttrEntity> {
-	
+
+    void deleteAttrRelation(@Param("entitis") List<AttrAttrgroupRelationEntity> attrAttrgroupRelationEntityList);
 }
