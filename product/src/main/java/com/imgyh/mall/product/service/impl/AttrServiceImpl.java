@@ -59,8 +59,8 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         AttrEntity attrEntity = new AttrEntity();
         BeanUtils.copyProperties(attrVo, attrEntity);
         this.save(attrEntity);
-        // 基本属性才查询attrAttrGroup表
-        if (attrVo.getAttrType().equals(ProductConstant.AttrType.BASE_TYPE.getCode())) {
+        // 基本属性才查询attrAttrGroup表 并且 设置了AttrGroupId才去插入 attr与attr group的关系
+        if (attrVo.getAttrType().equals(ProductConstant.AttrType.BASE_TYPE.getCode()) && attrVo.getAttrGroupId() != null) {
             // 保存attr与attr group的关系
             AttrAttrgroupRelationEntity attrAttrgroupRelationEntity = new AttrAttrgroupRelationEntity();
             attrAttrgroupRelationEntity.setAttrId(attrEntity.getAttrId());
@@ -108,7 +108,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
                         AttrAttrgroupRelationEntity attrAttrgroupRelationEntity = attrAttrgroupRelationDao.selectOne(
                                 new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attrEntity.getAttrId()));
                         // 再去 pms_attr_group 表找 attr_group_name
-                        if (attrAttrgroupRelationEntity != null) {
+                        if (attrAttrgroupRelationEntity != null && attrAttrgroupRelationEntity.getAttrGroupId() != null) {
                             AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(attrAttrgroupRelationEntity.getAttrGroupId());
                             attrResponseVo.setGroupName(attrGroupEntity.getAttrGroupName());
                         }
@@ -165,7 +165,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         BeanUtils.copyProperties(attr, attrEntity);
         this.updateById(attrEntity);
         // 基本属性才查询attrAttrGroup表
-        if (attr.getAttrType().equals(ProductConstant.AttrType.BASE_TYPE.getCode())) {
+        if (attr.getAttrType().equals(ProductConstant.AttrType.BASE_TYPE.getCode()) && attr.getAttrGroupId() != null) {
             // 更新所属 属性组 更新 attrAttrGroup表
             // 有可能某个属性 没有设置分组，修改的时候需要插入一条属性与属性分组的关联记录
             AttrAttrgroupRelationEntity attrAttrgroupRelationEntity = new AttrAttrgroupRelationEntity();

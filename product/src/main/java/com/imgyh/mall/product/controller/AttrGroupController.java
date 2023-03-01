@@ -109,11 +109,28 @@ public class AttrGroupController {
         return R.ok().put("data",data);
     }
 
+    // 获取分组关联的所有属性
+    @GetMapping("{attrgroupId}/noattr/relation")
+    public R getNoAttrRelation(@RequestParam Map<String, Object> params,
+                               @PathVariable("attrgroupId") Long attrgroupId){
+
+        PageUtils page = attrAttrgroupRelationService.listNoAttrRelation(params, attrgroupId);
+        return R.ok().put("page",page);
+    }
+
     // 删除属性与分组的关联关系
     @PostMapping("/attr/relation/delete")
     public R deleteAttrRelation(@RequestBody List<AttrAttrgroupRelationEntity> attrAttrgroupRelationEntityList){
         // 去 attrAttrGroupRelation 表中删除
         attrAttrgroupRelationService.deleteAttrRelation(attrAttrgroupRelationEntityList);
+        return R.ok();
+    }
+
+    // 删除属性与分组的关联关系
+    @PostMapping("/attr/relation")
+    public R saveAttrRelation(@RequestBody List<AttrAttrgroupRelationEntity> attrAttrgroupRelationEntityList){
+        // 去 attrAttrGroupRelation 表中保存
+        attrAttrgroupRelationService.saveAttrRelation(attrAttrgroupRelationEntityList);
         return R.ok();
     }
 
