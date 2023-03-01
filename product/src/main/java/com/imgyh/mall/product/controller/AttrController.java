@@ -4,6 +4,7 @@ import com.imgyh.mall.common.utils.PageUtils;
 import com.imgyh.mall.common.utils.R;
 import com.imgyh.mall.product.entity.AttrEntity;
 import com.imgyh.mall.product.service.AttrService;
+import com.imgyh.mall.product.vo.AttrResponseVo;
 import com.imgyh.mall.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -44,9 +45,9 @@ public class AttrController {
     @RequestMapping("/info/{attrId}")
     //@RequiresPermissions("product:attr:info")
     public R info(@PathVariable("attrId") Long attrId){
-		AttrEntity attr = attrService.getById(attrId);
-
-        return R.ok().put("attr", attr);
+//		AttrEntity attr = attrService.getById(attrId);
+        AttrResponseVo attrResponseVo = attrService.getAttrResponse(attrId);
+        return R.ok().put("attr", attrResponseVo);
     }
 
     /**

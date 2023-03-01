@@ -2,6 +2,8 @@ package com.imgyh.mall.product.vo;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @ClassName : AttrResponseVo
  * @Package : com.imgyh.mall.product.vo
@@ -21,4 +23,5 @@ import lombok.Data;
 public class AttrResponseVo extends AttrVo{
     private String catelogName;
     private String groupName;
+    private List<Long> catelogPath;
 }

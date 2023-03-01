@@ -14,6 +14,7 @@ import com.imgyh.mall.product.entity.AttrEntity;
 import com.imgyh.mall.product.entity.AttrGroupEntity;
 import com.imgyh.mall.product.entity.CategoryEntity;
 import com.imgyh.mall.product.service.AttrService;
+import com.imgyh.mall.product.service.CategoryService;
 import com.imgyh.mall.product.vo.AttrResponseVo;
 import com.imgyh.mall.product.vo.AttrVo;
 import org.springframework.beans.BeanUtils;
@@ -36,6 +37,9 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
 
     @Resource
     private CategoryDao categoryDao;
+
+    @Resource
+    private CategoryService categoryService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -109,6 +113,36 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
 
         pageUtils.setList(list);
         return pageUtils;
+    }
+
+    @Override
+    public AttrResponseVo getAttrResponse(Long attrId) {
+        // 获取 attr 表相关信息
+        AttrEntity attr = this.getById(attrId);
+        AttrResponseVo attrResponseVo = new AttrResponseVo();
+        BeanUtils.copyProperties(attr,attrResponseVo);
+        // 获取 attr属性属于哪个属性组
+        AttrAttrgroupRelationEntity attrAttrgroupRelationEntity = attrAttrgroupRelationDao.selectOne(
+                new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id",attrId));
+
+        if (attrAttrgroupRelationEntity != null) {
+            Long attrGroupId = attrAttrgroupRelationEntity.getAttrGroupId();
+            attrResponseVo.setAttrGroupId(attrGroupId);
+            AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(attrGroupId);
+            if (attrGroupEntity != null) {
+                attrResponseVo.setGroupName(attrGroupEntity.getAttrGroupName());
+            }
+        }
+
+        // 获取 attr属性属于哪个分类
+        CategoryEntity categoryEntity = categoryDao.selectById(attr.getCatelogId());
+        if (categoryEntity != null) {
+            attrResponseVo.setCatelogName(categoryEntity.getName());
+            List<Long> catelogPath = categoryService.findCatelogPath(attr.getCatelogId());
+            attrResponseVo.setCatelogPath(catelogPath);
+        }
+
+        return attrResponseVo;
     }
 
 }
