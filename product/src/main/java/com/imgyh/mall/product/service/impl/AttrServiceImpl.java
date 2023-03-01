@@ -145,4 +145,27 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         return attrResponseVo;
     }
 
+    @Override
+    public void updateRelation(AttrVo attr) {
+        // 更新自己 attr表
+        AttrEntity attrEntity = new AttrEntity();
+        BeanUtils.copyProperties(attr,attrEntity);
+        this.updateById(attrEntity);
+        // 更新所属 属性组 更新 attrAttrGroup表
+        // 有可能某个属性 没有设置分组，修改的时候需要插入一条属性与属性分组的关联记录
+        AttrAttrgroupRelationEntity attrAttrgroupRelationEntity = new AttrAttrgroupRelationEntity();
+        attrAttrgroupRelationEntity.setAttrId(attr.getAttrId());
+        attrAttrgroupRelationEntity.setAttrGroupId(attr.getAttrGroupId());
+        QueryWrapper<AttrAttrgroupRelationEntity> wrapper = new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attr.getAttrId());
+        Long count = attrAttrgroupRelationDao.selectCount(wrapper);
+        if (count == 0){
+            // 插入
+            attrAttrgroupRelationDao.insert(attrAttrgroupRelationEntity);
+        }else {
+            // 修改
+            attrAttrgroupRelationDao.update(attrAttrgroupRelationEntity, wrapper);
+        }
+
+    }
+
 }

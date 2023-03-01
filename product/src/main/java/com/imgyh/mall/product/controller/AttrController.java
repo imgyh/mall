@@ -2,7 +2,6 @@ package com.imgyh.mall.product.controller;
 
 import com.imgyh.mall.common.utils.PageUtils;
 import com.imgyh.mall.common.utils.R;
-import com.imgyh.mall.product.entity.AttrEntity;
 import com.imgyh.mall.product.service.AttrService;
 import com.imgyh.mall.product.vo.AttrResponseVo;
 import com.imgyh.mall.product.vo.AttrVo;
@@ -67,9 +66,9 @@ public class AttrController {
      */
     @RequestMapping("/update")
     //@RequiresPermissions("product:attr:update")
-    public R update(@RequestBody AttrEntity attr){
-		attrService.updateById(attr);
-
+    public R update(@RequestBody AttrVo attr){
+//		attrService.updateById(attr);
+        attrService.updateRelation(attr);
         return R.ok();
     }
 
