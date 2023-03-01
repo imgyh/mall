@@ -2,12 +2,15 @@ package com.imgyh.mall.product.controller;
 
 import com.imgyh.mall.common.utils.PageUtils;
 import com.imgyh.mall.common.utils.R;
+import com.imgyh.mall.product.entity.AttrEntity;
 import com.imgyh.mall.product.entity.AttrGroupEntity;
+import com.imgyh.mall.product.service.AttrAttrgroupRelationService;
 import com.imgyh.mall.product.service.AttrGroupService;
 import com.imgyh.mall.product.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +32,9 @@ public class AttrGroupController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Resource
+    private AttrAttrgroupRelationService attrAttrgroupRelationService;
 
     /**
      *
@@ -92,6 +98,14 @@ public class AttrGroupController {
 		attrGroupService.removeByIds(Arrays.asList(attrGroupIds));
 
         return R.ok();
+    }
+
+    // 获取分组关联的所有属性
+    @GetMapping("{attrgroupId}/attr/relation")
+    public R getAttrRelation(@PathVariable("attrgroupId") Long attrgroupId){
+        // 去 attrAttrGroupRelation 表中找
+        List<AttrEntity> data = attrAttrgroupRelationService.listAttrRelation(attrgroupId);
+        return R.ok().put("data",data);
     }
 
 }
