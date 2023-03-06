@@ -3,15 +3,17 @@ package com.imgyh.mall.product.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.imgyh.mall.common.utils.PageUtils;
 import com.imgyh.mall.common.utils.R;
+import com.imgyh.mall.product.entity.BrandEntity;
 import com.imgyh.mall.product.entity.CategoryBrandRelationEntity;
 import com.imgyh.mall.product.service.CategoryBrandRelationService;
+import com.imgyh.mall.product.vo.BrandVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
+import java.util.stream.Collectors;
 
 
 /**
@@ -91,6 +93,23 @@ public class CategoryBrandRelationController {
                 new QueryWrapper<CategoryBrandRelationEntity>().eq("brand_id", brandId));
 
         return R.ok().put("data", list);
+    }
+
+    /**
+     * 获取分类关联的品牌信息
+     */
+    @GetMapping("/brands/list")
+    public R brandList(@RequestParam(value = "catId", required = true) Long catId){
+        List<BrandEntity> list = categoryBrandRelationService.brandlist(catId);
+
+        List<BrandVo> data = list.stream().map((item) -> {
+            BrandVo brandVo = new BrandVo();
+            brandVo.setBrandId(item.getBrandId());
+            brandVo.setBrandName(item.getName());
+            return brandVo;
+        }).collect(Collectors.toList());
+
+        return R.ok().put("data",data);
     }
 
 }

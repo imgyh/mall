@@ -2,8 +2,10 @@ package com.imgyh.mall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.imgyh.mall.common.utils.PageUtils;
+import com.imgyh.mall.product.entity.BrandEntity;
 import com.imgyh.mall.product.entity.CategoryBrandRelationEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,5 +24,7 @@ public interface CategoryBrandRelationService extends IService<CategoryBrandRela
     void updateBrandName(Long brandId, String name);
 
     void updateCatelogName(Long catId, String name);
+
+    List<BrandEntity> brandlist(Long catId);
 }
 

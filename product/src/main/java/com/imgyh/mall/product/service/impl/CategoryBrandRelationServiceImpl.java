@@ -16,7 +16,9 @@ import com.imgyh.mall.product.service.CategoryBrandRelationService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service("categoryBrandRelationService")
@@ -70,6 +72,27 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
         entity.setCatelogName(name);
         baseMapper.update(entity,
                 new UpdateWrapper<CategoryBrandRelationEntity>().eq("catelog_id", catId));
+    }
+
+    /**
+     * 根据分类id, 查出该分类下所哟品牌详细信息
+     *
+     * @param catId
+     * @return
+     */
+    @Override
+    public List<BrandEntity> brandlist(Long catId) {
+        // 根据catId查brandId
+        List<CategoryBrandRelationEntity> relationEntityList = this.baseMapper.selectList(
+                new QueryWrapper<CategoryBrandRelationEntity>().eq("catelog_id", catId));
+
+        List<Long> brandIdList = relationEntityList.stream().map((item) -> {
+            return item.getBrandId();
+        }).collect(Collectors.toList());
+        // 根据brandId集合查询详细信息
+        List<BrandEntity> brandEntities = brandDao.selectBatchIds(brandIdList);
+
+        return brandEntities;
     }
 
 }
