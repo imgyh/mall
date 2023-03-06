@@ -59,4 +59,9 @@ public class AttrVo {
     private Integer showDesc;
 
     private Long attrGroupId;
+
+    /**
+     * 单选多选 值类型[0-为单个值，1-可以选择多个值]
+     */
+    private Integer valueType;
 }

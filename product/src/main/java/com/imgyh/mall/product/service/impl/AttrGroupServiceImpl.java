@@ -6,16 +6,25 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.imgyh.mall.common.utils.PageUtils;
 import com.imgyh.mall.common.utils.Query;
 import com.imgyh.mall.product.dao.AttrGroupDao;
+import com.imgyh.mall.product.entity.AttrEntity;
 import com.imgyh.mall.product.entity.AttrGroupEntity;
+import com.imgyh.mall.product.service.AttrAttrgroupRelationService;
 import com.imgyh.mall.product.service.AttrGroupService;
+import com.imgyh.mall.product.vo.AttrgroupWithAttrVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service("attrGroupService")
 public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEntity> implements AttrGroupService {
 
+    @Resource
+    private AttrAttrgroupRelationService attrAttrgroupRelationService;
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<AttrGroupEntity> page = this.page(
@@ -52,6 +61,27 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
         );
 
         return new PageUtils(page);
+    }
+
+    /**
+     * 获取分类下所有分组&关联属性
+     * @param catelogId
+     * @return
+     */
+    @Override
+    public List<AttrgroupWithAttrVo> getAttrgroupWithAttr(Long catelogId) {
+        // 查catelogId下的属性分组
+        List<AttrGroupEntity> attrGroupEntityList = this.list(new QueryWrapper<AttrGroupEntity>().eq("catelog_id", catelogId));
+        List<AttrgroupWithAttrVo> collect = attrGroupEntityList.stream().map((item) -> {
+            AttrgroupWithAttrVo attrgroupWithAttrVo = new AttrgroupWithAttrVo();
+            BeanUtils.copyProperties(item, attrgroupWithAttrVo);
+            // 查每个属性分组下的属性
+            List<AttrEntity> attrEntities = attrAttrgroupRelationService.listAttrRelation(item.getAttrGroupId());
+            attrgroupWithAttrVo.setAttrs(attrEntities);
+            return attrgroupWithAttrVo;
+        }).collect(Collectors.toList());
+
+        return collect;
     }
 
 }

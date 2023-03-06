@@ -8,6 +8,7 @@ import com.imgyh.mall.product.entity.AttrGroupEntity;
 import com.imgyh.mall.product.service.AttrAttrgroupRelationService;
 import com.imgyh.mall.product.service.AttrGroupService;
 import com.imgyh.mall.product.service.CategoryService;
+import com.imgyh.mall.product.vo.AttrgroupWithAttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -134,4 +135,9 @@ public class AttrGroupController {
         return R.ok();
     }
 
+    @GetMapping("/{catelogId}/withattr")
+    public R attrgroupWithAttr(@PathVariable("catelogId") Long catelogId){
+        List<AttrgroupWithAttrVo> vos = attrGroupService.getAttrgroupWithAttr(catelogId);
+        return R.ok().put("data", vos);
+    }
 }
