@@ -29,10 +29,16 @@ spring:
             - Path=/api/product/**
           filters:
             - RewritePath=/api/?(?<segment>.*), /$\{segment}
-        - id: product
+        - id: thirdparty
           uri: lb://thirdparty # lb 负载均衡 需要添加 spring-cloud-loadbalancer
           predicates:
             - Path=/api/thirdparty/**
+          filters:
+            - RewritePath=/api/?(?<segment>.*), /$\{segment}
+        - id: member
+          uri: lb://member # lb 负载均衡 需要添加 spring-cloud-loadbalancer
+          predicates:
+            - Path=/api/member/**
           filters:
             - RewritePath=/api/?(?<segment>.*), /$\{segment}
         - id: renren
