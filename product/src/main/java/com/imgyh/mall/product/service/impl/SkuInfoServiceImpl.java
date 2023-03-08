@@ -11,6 +11,7 @@ import com.imgyh.mall.product.service.SkuInfoService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 
@@ -19,32 +20,55 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        System.out.println(params);
-        QueryWrapper<SkuInfoEntity> wrapper = new QueryWrapper<>();
+        QueryWrapper<SkuInfoEntity> queryWrapper = new QueryWrapper<>();
+        /**
+         * key:
+         * catelogId: 0
+         * brandId: 0
+         * min: 0
+         * max: 0
+         */
         String key = (String) params.get("key");
         if(!StringUtils.isEmpty(key)){
-            wrapper.and((w)->{
-                w.eq("id",key).or().like("spu_name",key);
+            queryWrapper.and((wrapper)->{
+                wrapper.eq("sku_id",key).or().like("sku_name",key);
             });
-        }
-        // status=1 and (id=1 or spu_name like xxx)
-        String status = (String) params.get("status");
-        if(!StringUtils.isEmpty(status)){
-            wrapper.eq("publish_status",status);
-        }
-
-        String brandId = (String) params.get("brandId");
-        if(!StringUtils.isEmpty(brandId)&&!"0".equalsIgnoreCase(brandId)){
-            wrapper.eq("brand_id",brandId);
         }
 
         String catelogId = (String) params.get("catelogId");
         if(!StringUtils.isEmpty(catelogId)&&!"0".equalsIgnoreCase(catelogId)){
-            wrapper.eq("catalog_id",catelogId);
+
+            queryWrapper.eq("catalog_id",catelogId);
         }
+
+        String brandId = (String) params.get("brandId");
+        if(!StringUtils.isEmpty(brandId)&&!"0".equalsIgnoreCase(catelogId)){
+            queryWrapper.eq("brand_id",brandId);
+        }
+
+        String min = (String) params.get("min");
+        if(!StringUtils.isEmpty(min)){
+            queryWrapper.ge("price",min);
+        }
+
+        String max = (String) params.get("max");
+
+        if(!StringUtils.isEmpty(max)  ){
+            try{
+                BigDecimal bigDecimal = new BigDecimal(max);
+
+                if(bigDecimal.compareTo(new BigDecimal("0"))==1){
+                    queryWrapper.le("price",max);
+                }
+            }catch (Exception e){
+
+            }
+
+        }
+
         IPage<SkuInfoEntity> page = this.page(
                 new Query<SkuInfoEntity>().getPage(params),
-                wrapper
+                queryWrapper
         );
 
         return new PageUtils(page);
