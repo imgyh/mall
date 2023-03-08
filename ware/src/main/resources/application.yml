@@ -5,6 +5,8 @@ spring:
     username: root
     password: 123456
     url: jdbc:mysql://127.0.0.1:3306/mall_wms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
 
 mybatis-plus:
   #  mapper路径
@@ -12,3 +14,8 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: auto # 主键自增
+
+# 日志级别
+logging:
+  level:
+    com.imgyh.mall: debug

@@ -41,6 +41,12 @@ spring:
             - Path=/api/member/**
           filters:
             - RewritePath=/api/?(?<segment>.*), /$\{segment}
+        - id: ware
+          uri: lb://ware # lb 负载均衡 需要添加 spring-cloud-loadbalancer
+          predicates:
+            - Path=/api/ware/**
+          filters:
+            - RewritePath=/api/?(?<segment>.*), /$\{segment}
         - id: renren
           uri: lb://renren # lb 负载均衡 需要添加 spring-cloud-loadbalancer
           predicates:
