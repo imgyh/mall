@@ -1,20 +1,15 @@
 package com.imgyh.mall.coupon.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-//import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.imgyh.mall.coupon.entity.SkuFullReductionEntity;
-import com.imgyh.mall.coupon.service.SkuFullReductionService;
+import com.imgyh.mall.common.to.SkuReductionTo;
 import com.imgyh.mall.common.utils.PageUtils;
 import com.imgyh.mall.common.utils.R;
+import com.imgyh.mall.coupon.entity.SkuFullReductionEntity;
+import com.imgyh.mall.coupon.service.SkuFullReductionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 
@@ -84,6 +79,13 @@ public class SkuFullReductionController {
     public R delete(@RequestBody Long[] ids){
 		skuFullReductionService.removeByIds(Arrays.asList(ids));
 
+        return R.ok();
+    }
+
+    @PostMapping("/saveinfo")
+    public R saveInfo(@RequestBody SkuReductionTo reductionTo){
+
+        skuFullReductionService.saveSkuReduction(reductionTo);
         return R.ok();
     }
 
