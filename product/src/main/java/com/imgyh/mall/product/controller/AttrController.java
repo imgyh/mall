@@ -2,13 +2,16 @@ package com.imgyh.mall.product.controller;
 
 import com.imgyh.mall.common.utils.PageUtils;
 import com.imgyh.mall.common.utils.R;
+import com.imgyh.mall.product.entity.ProductAttrValueEntity;
 import com.imgyh.mall.product.service.AttrService;
+import com.imgyh.mall.product.service.ProductAttrValueService;
 import com.imgyh.mall.product.vo.AttrResponseVo;
 import com.imgyh.mall.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -25,6 +28,8 @@ import java.util.Map;
 public class AttrController {
     @Autowired
     private AttrService attrService;
+    @Autowired
+    private ProductAttrValueService productAttrValueService;
 
     /**
      * 列表
@@ -95,6 +100,20 @@ public class AttrController {
         PageUtils page = attrService.queryListPage(params,catelogId, attrType);
 
         return R.ok().put("page", page);
+    }
+
+    // 获取spu规格
+    @GetMapping("base/listforspu/{spuId}")
+    public R baseListforspu(@PathVariable("spuId") Long spuId){
+        List<ProductAttrValueEntity> data = productAttrValueService.baseListforspu(spuId);
+        return R.ok().put("data",data);
+    }
+
+    // 修改商品规格
+    @PostMapping("update/{spuId}")
+    public R updateAttrforspu(@PathVariable("spuId") Long spuId, @RequestBody List<ProductAttrValueEntity> entities){
+        productAttrValueService.updateAttrforspu(spuId, entities);
+        return R.ok();
     }
 
 }

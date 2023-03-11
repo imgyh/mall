@@ -5,6 +5,7 @@ import com.imgyh.mall.common.utils.R;
 import com.imgyh.mall.ware.entity.PurchaseEntity;
 import com.imgyh.mall.ware.service.PurchaseService;
 import com.imgyh.mall.ware.vo.MergeVo;
+import com.imgyh.mall.ware.vo.PurchaseDoneVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -106,6 +107,15 @@ public class PurchaseController {
     public R received(@RequestBody List<Long> ids){
 
         purchaseService.received(ids);
+
+        return R.ok();
+    }
+
+    ///ware/purchase/done
+    @PostMapping("/done")
+    public R finish(@RequestBody PurchaseDoneVo doneVo){
+
+        purchaseService.done(doneVo);
 
         return R.ok();
     }
