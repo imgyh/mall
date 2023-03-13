@@ -22,6 +22,7 @@
         <module>common</module>
         <module>gateway</module>
         <module>thirdparty</module>
+        <module>search</module>
     </modules>
 
 
