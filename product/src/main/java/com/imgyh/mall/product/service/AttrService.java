@@ -6,6 +6,7 @@ import com.imgyh.mall.product.entity.AttrEntity;
 import com.imgyh.mall.product.vo.AttrResponseVo;
 import com.imgyh.mall.product.vo.AttrVo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,5 +27,7 @@ public interface AttrService extends IService<AttrEntity> {
     AttrResponseVo getAttrResponse(Long attrId);
 
     void updateRelation(AttrVo attr);
+
+    List<Long> selectSearchAttrs(List<Long> attrIds);
 }
 
