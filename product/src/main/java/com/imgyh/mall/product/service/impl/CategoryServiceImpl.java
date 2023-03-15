@@ -1,5 +1,7 @@
 package com.imgyh.mall.product.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -10,6 +12,8 @@ import com.imgyh.mall.product.entity.CategoryEntity;
 import com.imgyh.mall.product.service.CategoryBrandRelationService;
 import com.imgyh.mall.product.service.CategoryService;
 import com.imgyh.mall.product.vo.Catelog2Vo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -21,6 +25,9 @@ import java.util.stream.Collectors;
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
+
+    @Autowired
+    StringRedisTemplate redisTemplate;
 
     @Resource
     private CategoryBrandRelationService categoryBrandRelationService;
@@ -98,6 +105,23 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      */
     @Override
     public Map<String, List<Catelog2Vo>> getCatalogJson() {
+        // 1.先去redis中查有没有
+        String catalogJSON = redisTemplate.opsForValue().get("catalogJSON");
+        if (StringUtils.isEmpty(catalogJSON)){
+            // redis中没有就去数据库中查
+            Map<String, List<Catelog2Vo>> catalogJsonFromDB = getCatalogJsonFromDB();
+            // 从数据库中查到的数据存到redis中
+            String s = JSON.toJSONString(catalogJsonFromDB);
+            redisTemplate.opsForValue().set("catalogJSON",s);
+            return catalogJsonFromDB;
+        }
+        // redis中有，转化为相应类型
+        Map<String, List<Catelog2Vo>> map = JSON.parseObject(catalogJSON, new TypeReference<Map<String, List<Catelog2Vo>>>() {
+        });
+        return map;
+    }
+
+    public Map<String, List<Catelog2Vo>> getCatalogJsonFromDB() {
         List<CategoryEntity> categoryEntities = this.list();
         List<CategoryEntity> l1 = categoryEntities.stream().filter(categoryEntity -> {
             return categoryEntity.getCatLevel() == 1;
