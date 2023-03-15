@@ -53,4 +53,8 @@ spring:
             - Path=/api/**
           filters:
             - RewritePath=/api/?(?<segment>.*), /renren-fast/$\{segment}
+        - id: host_route # 配置首页路由, 首页html写在product微服务中
+          uri: lb://product # lb 负载均衡 需要添加 spring-cloud-loadbalancer
+          predicates:
+            - Host=mall.gyh.im
 
