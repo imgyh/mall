@@ -3,6 +3,7 @@ package com.imgyh.mall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.imgyh.mall.common.utils.PageUtils;
 import com.imgyh.mall.product.entity.CategoryEntity;
+import com.imgyh.mall.product.vo.Catelog2Vo;
 
 import java.util.List;
 import java.util.Map;
@@ -25,5 +26,9 @@ public interface CategoryService extends IService<CategoryEntity> {
     List<Long> findCatelogPath(Long catelogId);
 
     void updateAllRelatedTable(CategoryEntity category);
+
+    List<CategoryEntity> getLevel1Categorys();
+
+    Map<String, List<Catelog2Vo>> getCatalogJson();
 }
 

@@ -1,4 +1,4 @@
-package com.imgyh.mall.product.controller;
+package com.imgyh.mall.product.app;
 
 import java.util.Arrays;
 import java.util.Map;

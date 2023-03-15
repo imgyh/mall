@@ -7,6 +7,8 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/mall_pms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
+  thymeleaf:
+    cache: false # 关闭缓存, 调试用
 
 mybatis-plus:
   #  mapper路径

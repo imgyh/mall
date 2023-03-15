@@ -9,6 +9,7 @@ import com.imgyh.mall.product.dao.CategoryDao;
 import com.imgyh.mall.product.entity.CategoryEntity;
 import com.imgyh.mall.product.service.CategoryBrandRelationService;
 import com.imgyh.mall.product.service.CategoryService;
+import com.imgyh.mall.product.vo.Catelog2Vo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -79,6 +80,46 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         if (!StringUtils.isEmpty(category.getName())) {
             categoryBrandRelationService.updateCatelogName(category.getCatId(), category.getName());
         }
+    }
+
+    /**
+     * 查找一级分类
+     * @return
+     */
+    @Override
+    public List<CategoryEntity> getLevel1Categorys() {
+        List<CategoryEntity> categoryEntities = this.list(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
+        return categoryEntities;
+    }
+
+    /**
+     * 三级分类嵌套
+     * @return
+     */
+    @Override
+    public Map<String, List<Catelog2Vo>> getCatalogJson() {
+        List<CategoryEntity> categoryEntities = this.list();
+        List<CategoryEntity> l1 = categoryEntities.stream().filter(categoryEntity -> {
+            return categoryEntity.getCatLevel() == 1;
+        }).collect(Collectors.toList());
+
+        Map<String, List<Catelog2Vo>> map = l1.stream().collect(Collectors.toMap(k -> k.getCatId().toString(), v -> {
+            List<Catelog2Vo> list = categoryEntities.stream().filter(categoryEntity2 -> {
+                return categoryEntity2.getCatLevel() == 2 && categoryEntity2.getParentCid() == v.getCatId();
+            }).map(categoryEntity2 -> {
+                Catelog2Vo catelog2Vo = new Catelog2Vo(v.getCatId().toString(), null, categoryEntity2.getCatId().toString(), categoryEntity2.getName());
+                List<Catelog2Vo.Category3Vo> collect = categoryEntities.stream().filter(categoryEntity3 -> {
+                    return categoryEntity3.getCatLevel() == 3 && categoryEntity3.getParentCid() == categoryEntity2.getCatId();
+                }).map(categoryEntity3 -> {
+                    Catelog2Vo.Category3Vo category3Vo = new Catelog2Vo.Category3Vo(categoryEntity2.getCatId().toString(), categoryEntity3.getCatId().toString(), categoryEntity3.getName());
+                    return category3Vo;
+                }).collect(Collectors.toList());
+                catelog2Vo.setCatalog3List(collect);
+                return catelog2Vo;
+            }).collect(Collectors.toList());
+            return list;
+        }));
+        return map;
     }
 
     // 递归查找父分类的id
