@@ -12,6 +12,13 @@ spring:
   redis:
     host: 127.0.0.1
     port: 6379
+  cache:
+    type: redis # 使用redis作为缓存
+    redis:
+      time-to-live: 360000 #  过期时间，毫秒
+#      key-prefix: Cache_ # key的前缀, 指定了前缀就用指定的前缀，没有指定就使用缓存的名字(注解中的value字段)作为前缀
+      use-key-prefix: true # 是否使用前缀
+      cache-null-values: true # 是否缓存空值，防止缓存穿透
 
 mybatis-plus:
   #  mapper路径
