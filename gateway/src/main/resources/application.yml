@@ -57,4 +57,7 @@ spring:
           uri: lb://product # lb 负载均衡 需要添加 spring-cloud-loadbalancer
           predicates:
             - Host=mall.gyh.im
-
+        - id: search_route # 配置搜索页路由, 搜索页页html写在search微服务中
+          uri: lb://search # lb 负载均衡 需要添加 spring-cloud-loadbalancer
+          predicates:
+            - Host=search.mall.gyh.im
