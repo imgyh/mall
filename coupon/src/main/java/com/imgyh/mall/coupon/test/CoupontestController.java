@@ -11,7 +11,7 @@ public class CoupontestController {
     @Value("${profilename}")
     String profilename;
 
-    @GetMapping("/profilename")
+    @GetMapping("/coupon/profilename")
     String getProfileName(){
         return profilename;
     }

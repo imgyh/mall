@@ -25,7 +25,7 @@ public class ProducttestController {
     @Value("${profilename}")
     String profilename;
 
-    @GetMapping("/profilename")
+    @GetMapping("/product/profilename")
     String getProfileName(){
         return profilename;
     }

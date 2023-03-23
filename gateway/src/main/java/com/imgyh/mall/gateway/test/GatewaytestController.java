@@ -11,7 +11,7 @@ public class GatewaytestController {
     @Value("${profilename}")
     String profilename;
 
-    @GetMapping("/profilename")
+    @GetMapping("/gateway/profilename")
     String getProfileName(){
         return profilename;
     }

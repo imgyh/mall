@@ -11,7 +11,7 @@ public class OrdertestController {
     @Value("${profilename}")
     String profilename;
 
-    @GetMapping("/profilename")
+    @GetMapping("/order/profilename")
     String getProfileName(){
         return profilename;
     }

@@ -1,0 +1,9 @@
+
+spring:
+  thymeleaf:
+    cache: false # 关闭缓存, 调试用
+
+# 日志级别
+logging:
+  level:
+    com.imgyh.mall: debug

@@ -21,7 +21,7 @@ public class MembertestController {
     @Value("${profilename}")
     String profilename;
 
-    @GetMapping("/profilename")
+    @GetMapping("/member/profilename")
     String getProfileName(){
         return profilename;
     }

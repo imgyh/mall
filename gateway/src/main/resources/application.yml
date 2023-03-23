@@ -61,3 +61,7 @@ spring:
           uri: lb://search # lb 负载均衡 需要添加 spring-cloud-loadbalancer
           predicates:
             - Host=search.mall.gyh.im
+        - id: auth_route # 配置认证页路由, 搜索页页html写在auth微服务中
+          uri: lb://auth # lb 负载均衡 需要添加 spring-cloud-loadbalancer
+          predicates:
+            - Host=auth.mall.gyh.im

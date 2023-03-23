@@ -11,7 +11,7 @@ public class WaretestController {
     @Value("${profilename}")
     String profilename;
 
-    @GetMapping("/profilename")
+    @GetMapping("/ware/profilename")
     String getProfileName(){
         return profilename;
     }
