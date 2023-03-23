@@ -35,3 +35,9 @@ mybatis-plus:
 logging:
   level:
     com.imgyh.mall: debug
+# 线程池配置
+mall:
+  thread:
+    core-size: 50
+    max-size: 200
+    keep-alive-time: 10
