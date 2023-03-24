@@ -3,6 +3,7 @@ package com.imgyh.mall.auth.controller;
 import com.alibaba.fastjson.TypeReference;
 import com.imgyh.mall.auth.feign.MemberFeignService;
 import com.imgyh.mall.auth.feign.ThirdPartFeignService;
+import com.imgyh.mall.auth.vo.UserLoginVo;
 import com.imgyh.mall.auth.vo.UserRegistVo;
 import com.imgyh.mall.common.constant.AuthServerConstant;
 import com.imgyh.mall.common.exception.BizCodeEnume;
@@ -160,6 +161,19 @@ public class LoginController {
             redirectAttributes.addFlashAttribute("errors", errors);
             // 验证码不一致，转发到注册页
             return "redirect:http://auth.mall.gyh.im/reg.html";
+        }
+    }
+
+    @PostMapping("/login")
+    public String login(UserLoginVo vo, RedirectAttributes redirectAttributes){
+        R login = memberFeignService.login(vo);
+        if (login != null){
+            return "redirect:http://mall.gyh.im";
+        }else {
+            Map<String, String> errors = new HashMap<>();
+            errors.put("msg",login.getData("msg",new TypeReference<String>(){}));
+            redirectAttributes.addFlashAttribute("errors",errors);
+            return "redirect:http://auth.mall.gyh.im/login.html";
         }
     }
 }

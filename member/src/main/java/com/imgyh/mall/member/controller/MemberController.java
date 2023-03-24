@@ -7,6 +7,7 @@ import com.imgyh.mall.member.entity.MemberEntity;
 import com.imgyh.mall.member.exception.PhoneExsitException;
 import com.imgyh.mall.member.exception.UsernameExistException;
 import com.imgyh.mall.member.service.MemberService;
+import com.imgyh.mall.member.vo.MemberLoginVo;
 import com.imgyh.mall.member.vo.MemberRegistVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,16 @@ import java.util.Map;
 public class MemberController {
     @Autowired
     private MemberService memberService;
+
+    @PostMapping("/login")
+    public R login(@RequestBody MemberLoginVo vo){
+        MemberEntity memberEntity = memberService.login(vo);
+        if (memberEntity != null){
+            return R.ok().setData(memberEntity);
+        }else {
+            return R.error(BizCodeEnume.LOGINACCT_PASSWORD_EXCEPTION.getCode(), BizCodeEnume.LOGINACCT_PASSWORD_EXCEPTION.getMsg());
+        }
+    }
 
     @PostMapping("/regist")
     public R regist(@RequestBody MemberRegistVo vo){

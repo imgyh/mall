@@ -12,6 +12,7 @@ import com.imgyh.mall.member.exception.PhoneExsitException;
 import com.imgyh.mall.member.exception.UsernameExistException;
 import com.imgyh.mall.member.service.MemberLevelService;
 import com.imgyh.mall.member.service.MemberService;
+import com.imgyh.mall.member.vo.MemberLoginVo;
 import com.imgyh.mall.member.vo.MemberRegistVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -62,6 +63,27 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
 
         // 保存
         this.save(memberEntity);
+
+    }
+
+    @Override
+    public MemberEntity login(MemberLoginVo vo) {
+        // 查账户名(用户名或者手机号)是否存在
+        MemberEntity memberEntity = baseMapper.selectOne(
+                new QueryWrapper<MemberEntity>().eq("username", vo.getLoginacct())
+                .or().eq("mobile", vo.getPassword()));
+        if (memberEntity == null){
+            return null;
+        }else {
+            // 用户名存在, 验证密码
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            boolean matches = encoder.matches(vo.getPassword(), memberEntity.getPassword());
+            if (matches){
+                return memberEntity;
+            }else {
+                return null;
+            }
+        }
 
     }
 

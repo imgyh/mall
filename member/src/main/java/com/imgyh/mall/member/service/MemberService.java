@@ -3,6 +3,7 @@ package com.imgyh.mall.member.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.imgyh.mall.common.utils.PageUtils;
 import com.imgyh.mall.member.entity.MemberEntity;
+import com.imgyh.mall.member.vo.MemberLoginVo;
 import com.imgyh.mall.member.vo.MemberRegistVo;
 
 import java.util.Map;
@@ -19,5 +20,7 @@ public interface MemberService extends IService<MemberEntity> {
     PageUtils queryPage(Map<String, Object> params);
 
     void regist(MemberRegistVo vo);
+
+    MemberEntity login(MemberLoginVo vo);
 }
 
