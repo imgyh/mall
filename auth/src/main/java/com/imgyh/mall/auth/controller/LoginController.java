@@ -8,6 +8,7 @@ import com.imgyh.mall.auth.vo.UserRegistVo;
 import com.imgyh.mall.common.constant.AuthServerConstant;
 import com.imgyh.mall.common.exception.BizCodeEnume;
 import com.imgyh.mall.common.utils.R;
+import com.imgyh.mall.common.vo.MemberRespVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Controller;
@@ -56,14 +57,13 @@ public class LoginController {
 
     @GetMapping("/login.html")
     public String loginPage(HttpSession session) {
-        // Object attribute = session.getAttribute(AuthServerConstant.LOGIN_USER);
-        // if(attribute == null){
-        //     //没登录
-        //     return "login";
-        // }else {
-        //     return "redirect:http://mall.gyh.im";
-        // }
-        return "login";
+        Object attribute = session.getAttribute(AuthServerConstant.LOGIN_USER);
+        if(attribute == null){
+            //没登录
+            return "login";
+        }else {
+            return "redirect:http://mall.gyh.im";
+        }
     }
 
     @GetMapping("/reg.html")
@@ -165,9 +165,14 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String login(UserLoginVo vo, RedirectAttributes redirectAttributes){
+    public String login(UserLoginVo vo, RedirectAttributes redirectAttributes, HttpSession session){
+        // 调用远程服务查询数据库
         R login = memberFeignService.login(vo);
-        if (login != null){
+        if (login.getCode() == 0){
+            MemberRespVo data = login.getData(new TypeReference<MemberRespVo>() {
+            });
+            // 登录成功，通过SpringSession将session放入redis
+            session.setAttribute(AuthServerConstant.LOGIN_USER, data);
             return "redirect:http://mall.gyh.im";
         }else {
             Map<String, String> errors = new HashMap<>();

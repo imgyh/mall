@@ -9,6 +9,11 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
   thymeleaf:
     cache: false # 关闭缓存, 调试用
+  session:
+    store-type: redis  # 会话存储类型
+    redis:
+      flush-mode: on_save # # 会话刷新模式
+      namespace: spring:session # 用于存储会话的键的命名空间
   redis:
     host: 127.0.0.1
     port: 6379
@@ -19,6 +24,11 @@ spring:
 #      key-prefix: Cache_ # key的前缀, 指定了前缀就用指定的前缀，没有指定就使用缓存的名字(注解中的value字段)作为前缀
       use-key-prefix: true # 是否使用前缀
       cache-null-values: true # 是否缓存空值，防止缓存穿透
+
+server:
+  servlet:
+    session:
+      timeout: 30m # 会话超时 如果未指定持续时间后缀，则使用秒
 
 mybatis-plus:
   #  mapper路径
