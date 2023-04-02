@@ -96,6 +96,7 @@
       <ul>
         <li>
           <a  th:if="${session.loginUser!=null}">欢迎：[[${session.loginUser==null?'':session.loginUser.nickname}]]</a>
+          <a href="//auth.mall.gyh.im/logout" th:if="${session.loginUser!=null}">注销</a>
           <a href="//auth.mall.gyh.im/login.html" th:if="${session.loginUser==null}">欢迎，请登录</a>
         </li>
         <li>

@@ -7,6 +7,7 @@ import com.imgyh.mall.member.entity.MemberEntity;
 import com.imgyh.mall.member.exception.PhoneExsitException;
 import com.imgyh.mall.member.exception.UsernameExistException;
 import com.imgyh.mall.member.service.MemberService;
+import com.imgyh.mall.member.vo.GithubUser;
 import com.imgyh.mall.member.vo.MemberLoginVo;
 import com.imgyh.mall.member.vo.MemberRegistVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,17 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
 
+    @PostMapping("/oauth2/login")
+    public R oauthlogin(@RequestBody GithubUser githubUser){
+
+        MemberEntity entity =  memberService.oauthlogin(githubUser);
+        if(entity!=null){
+            //TODO 1、登录成功处理
+            return R.ok().setData(entity);
+        }else{
+            return R.error(BizCodeEnume.LOGINACCT_PASSWORD_EXCEPTION.getCode(),BizCodeEnume.LOGINACCT_PASSWORD_EXCEPTION.getMsg());
+        }
+    }
     @PostMapping("/login")
     public R login(@RequestBody MemberLoginVo vo){
         MemberEntity memberEntity = memberService.login(vo);

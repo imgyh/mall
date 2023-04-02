@@ -55,6 +55,12 @@ public class LoginController {
     @Autowired
     MemberFeignService memberFeignService;
 
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.removeAttribute(AuthServerConstant.LOGIN_USER);
+        return "redirect:http://mall.gyh.im";
+    }
+
     @GetMapping("/login.html")
     public String loginPage(HttpSession session) {
         Object attribute = session.getAttribute(AuthServerConstant.LOGIN_USER);

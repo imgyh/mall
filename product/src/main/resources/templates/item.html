@@ -59,6 +59,7 @@
 						<ul class="header_ul_right">
 							<li style="border: 0;">
 								<a href="//auth.mall.gyh.im/login.html" th:if="${session.loginUser==null}" class="aa">你好，请登录</a>
+								<a href="//auth.mall.gyh.im/logout" th:if="${session.loginUser!=null}">注销</a>
 								<a  th:if="${session.loginUser!=null}" class="aa" style="width: 100px">[[${session.loginUser.nickname}]]</a>
 							</li>
 							<li th:if="${session.loginUser==null}"><a href="//auth.mall.gyh.im/reg.html" style="color: red;">免费注册</a> |</li>

@@ -12,6 +12,7 @@ import com.imgyh.mall.member.exception.PhoneExsitException;
 import com.imgyh.mall.member.exception.UsernameExistException;
 import com.imgyh.mall.member.service.MemberLevelService;
 import com.imgyh.mall.member.service.MemberService;
+import com.imgyh.mall.member.vo.GithubUser;
 import com.imgyh.mall.member.vo.MemberLoginVo;
 import com.imgyh.mall.member.vo.MemberRegistVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +84,43 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
             }else {
                 return null;
             }
+        }
+
+    }
+
+    @Override
+    public MemberEntity oauthlogin(GithubUser githubUser) {
+        String name = githubUser.getName();
+        Long id = githubUser.getId();
+        String accessToken = githubUser.getAccessToken();
+
+        // 判断是否登陆过
+        MemberEntity memberEntity = baseMapper.selectOne(new QueryWrapper<MemberEntity>().eq("github_name", name).eq("github_id",id));
+        if (memberEntity != null) {
+            //这个用户已经注册，更新获取到的
+            MemberEntity updateMember = new MemberEntity();
+            updateMember.setId(memberEntity.getId());
+            updateMember.setGithubId(id);
+            updateMember.setAccessToken(accessToken);
+            updateMember.setGithubName(name);
+            baseMapper.updateById(updateMember);
+
+            memberEntity.setGithubName(name);
+            memberEntity.setGithubId(id);
+            memberEntity.setAccessToken(accessToken);
+
+            return memberEntity;
+        }else {
+            //没有注册过,注册一个
+            MemberEntity entity = new MemberEntity();
+            // entity.setUsername("github"+name);
+            entity.setNickname(name);
+            entity.setGithubId(id);
+            entity.setGithubName(name);
+            entity.setAccessToken(accessToken);
+            baseMapper.insert(entity);
+
+            return entity;
         }
 
     }

@@ -1,5 +1,6 @@
 package com.imgyh.mall.auth.feign;
 
+import com.imgyh.mall.auth.vo.GithubUser;
 import com.imgyh.mall.auth.vo.UserLoginVo;
 import com.imgyh.mall.auth.vo.UserRegistVo;
 import com.imgyh.mall.common.utils.R;
@@ -28,4 +29,8 @@ public interface MemberFeignService {
     public R regist(@RequestBody UserRegistVo vo);
     @PostMapping("/member/member/login")
     public R login(@RequestBody UserLoginVo vo);
+
+
+    @PostMapping("/member/member/oauth2/login")
+    public R oauthlogin(@RequestBody GithubUser githubUser);
 }
