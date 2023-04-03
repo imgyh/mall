@@ -1,0 +1,26 @@
+# 应用服务 WEB 访问端口
+server:
+  port: 9000
+
+spring:
+  application:
+    # 应用名称
+    name: cart
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848 # nacos地址
+      config:
+        server-addr: 127.0.0.1:8848 # nacos地址
+        file-extension: yml # 声明 DataId 文件扩展名
+        namespace: fa6b742c-0513-4229-ae80-2f8f5fd2a482        # 区分每个微服务
+        group: dev # 区分开发环境
+    loadbalancer:
+      nacos:
+        enabled: true # 开启loadbalancer
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*' # 一定要加引号，不然解析YML会出错

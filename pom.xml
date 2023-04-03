@@ -24,6 +24,7 @@
         <module>thirdparty</module>
         <module>search</module>
         <module>auth</module>
+        <module>cart</module>
     </modules>
 
 

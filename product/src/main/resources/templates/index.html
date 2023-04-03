@@ -95,9 +95,9 @@
       </b>
       <ul>
         <li>
-          <a  th:if="${session.loginUser!=null}">欢迎：[[${session.loginUser==null?'':session.loginUser.nickname}]]</a>
-          <a href="//auth.mall.gyh.im/logout" th:if="${session.loginUser!=null}">注销</a>
-          <a href="//auth.mall.gyh.im/login.html" th:if="${session.loginUser==null}">欢迎，请登录</a>
+          <a class="aa" th:if="${session.loginUser!=null}">欢迎：[[${session.loginUser==null?'':session.loginUser.nickname}]]</a>
+          <a href="//auth.mall.gyh.im/logout" class="aa" th:if="${session.loginUser!=null}">注销</a>
+          <a href="//auth.mall.gyh.im/login.html" class="aa" th:if="${session.loginUser==null}">欢迎，请登录</a>
         </li>
         <li>
           <a th:if="${session.loginUser==null}" href="//auth.mall.gyh.im/reg.html" class="li_2">免费注册</a>
@@ -122,7 +122,7 @@
     <div class="header_ico">
       <div class="header_gw">
         <img src="/static/index/img/img_15.png" />
-        <span><a href="/购物车\One_JDshop.html">我的购物车</a></span>
+        <span><a href="http://cart.mall.gyh.im/cart.html">我的购物车</a></span>
         <span>0</span>
       </div>
       <div class="header_ko">

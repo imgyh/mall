@@ -1,0 +1,31 @@
+
+spring:
+  thymeleaf:
+    cache: false # 关闭缓存, 调试用
+  session:
+    store-type: redis  # 会话存储类型
+    redis:
+      flush-mode: on_save # # 会话刷新模式
+      namespace: spring:session # 用于存储会话的键的命名空间
+  redis:
+    host: 127.0.0.1
+    port: 6379
+
+server:
+  servlet:
+    session:
+      timeout: 30m # 会话超时 如果未指定持续时间后缀，则使用秒
+
+
+# 日志级别
+logging:
+  level:
+    com.imgyh.mall: debug
+
+
+# 线程池配置
+mall:
+  thread:
+    core-size: 50
+    max-size: 200
+    keep-alive-time: 10
