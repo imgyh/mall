@@ -69,3 +69,7 @@ spring:
           uri: lb://cart # lb 负载均衡 需要添加 spring-cloud-loadbalancer
           predicates:
             - Host=cart.mall.gyh.im
+        - id: order_route # 配置认证页路由, 搜索页页html写在order微服务中
+          uri: lb://order # lb 负载均衡 需要添加 spring-cloud-loadbalancer
+          predicates:
+            - Host=order.mall.gyh.im
