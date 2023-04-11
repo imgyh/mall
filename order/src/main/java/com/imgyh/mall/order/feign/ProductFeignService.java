@@ -1,6 +1,9 @@
 package com.imgyh.mall.order.feign;
 
+import com.imgyh.mall.common.utils.R;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * @ClassName : ProductFeignService
@@ -19,5 +22,7 @@ import org.springframework.cloud.openfeign.FeignClient;
  **/
 @FeignClient("product")
 public interface ProductFeignService {
+    @GetMapping("/product/spuinfo/skuId/{id}")
+    R getSpuInfoBySkuId(@PathVariable("id") Long skuId);
 
 }

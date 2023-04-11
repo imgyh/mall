@@ -1,20 +1,15 @@
 package com.imgyh.mall.order.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-//import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.imgyh.mall.order.entity.OrderEntity;
-import com.imgyh.mall.order.service.OrderService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.imgyh.mall.common.utils.PageUtils;
 import com.imgyh.mall.common.utils.R;
+import com.imgyh.mall.order.entity.OrderEntity;
+import com.imgyh.mall.order.service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 
@@ -30,6 +25,12 @@ import com.imgyh.mall.common.utils.R;
 public class OrderController {
     @Autowired
     private OrderService orderService;
+
+    @GetMapping("/status/{orderSn}")
+    public R getOrderStatus(@PathVariable("orderSn") String orderSn){
+        OrderEntity orderEntity = orderService.getOne(new QueryWrapper<OrderEntity>().eq("order_sn", orderSn));
+        return R.ok().setData(orderEntity);
+    }
 
     /**
      * 列表

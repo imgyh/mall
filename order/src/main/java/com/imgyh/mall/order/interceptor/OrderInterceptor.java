@@ -2,6 +2,7 @@ package com.imgyh.mall.order.interceptor;
 
 import com.imgyh.mall.common.constant.AuthServerConstant;
 import com.imgyh.mall.common.vo.MemberRespVo;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +29,14 @@ public class OrderInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
+        // 库存系统需要通过此接口获取订单的状态 需要放行 /order/order/status/2948294820984028420
+        String uri = request.getRequestURI();
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+        boolean match = antPathMatcher.match("/order/order/status/**", uri);
+        boolean match1 = antPathMatcher.match("/payed/notify", uri);
+        if(match || match1){
+            return true;
+        }
 
         MemberRespVo attribute = (MemberRespVo) request.getSession().getAttribute(AuthServerConstant.LOGIN_USER);
         if (attribute != null) {

@@ -7,6 +7,21 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/mall_wms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
+  # RabbitMQ配置
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: / # 虚拟主机配置
+    publisher-confirm-type: correlated # 开启发送端消息抵达Broker确认
+    publisher-returns: true # 开启发送端消息抵达Queue确认
+    template:
+      mandatory: true # 只要消息抵达Queue，就会异步发送优先回调returnfirm
+    listener:
+      simple:
+        acknowledge-mode: manual  # 手动ack消息，不使用默认的消费端确认
+      type: simple # 默认值
 
 mybatis-plus:
   #  mapper路径

@@ -1,10 +1,13 @@
 package com.imgyh.mall.ware.controller;
 
+import com.imgyh.mall.common.exception.BizCodeEnume;
+import com.imgyh.mall.common.exception.NoStockException;
 import com.imgyh.mall.common.to.SkuHasStockVo;
 import com.imgyh.mall.common.utils.PageUtils;
 import com.imgyh.mall.common.utils.R;
 import com.imgyh.mall.ware.entity.WareSkuEntity;
 import com.imgyh.mall.ware.service.WareSkuService;
+import com.imgyh.mall.ware.vo.WareSkuLockVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +29,16 @@ import java.util.Map;
 public class WareSkuController {
     @Autowired
     private WareSkuService wareSkuService;
+
+    @PostMapping("/lock/order")
+    public R orderLockStock(@RequestBody WareSkuLockVo vo){
+        try{
+            Boolean stock = wareSkuService.orderLockStock(vo);
+            return R.ok();
+        }catch (NoStockException e){
+            return R.error(BizCodeEnume.NO_STOCK_EXCEPTION.getCode(),e.getMessage());
+        }
+    }
 
     /**
      * 查询sku是否有库存
