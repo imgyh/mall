@@ -35,6 +35,7 @@ public class OrderCloseListener {
     public void listener(OrderEntity entity, Channel channel, Message message) throws IOException {
         System.out.println("收到过期的订单信息：准备关闭订单"+entity.getOrderSn()+"==>"+entity.getId());
         try{
+            // TODO 手动调用支付宝收单api
             orderService.closeOrder(entity);
             channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
         }catch (Exception e){

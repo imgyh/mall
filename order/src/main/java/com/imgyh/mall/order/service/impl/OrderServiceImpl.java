@@ -2,6 +2,7 @@ package com.imgyh.mall.order.service.impl;
 
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -15,6 +16,7 @@ import com.imgyh.mall.order.constant.OrderConstant;
 import com.imgyh.mall.order.dao.OrderDao;
 import com.imgyh.mall.order.entity.OrderEntity;
 import com.imgyh.mall.order.entity.OrderItemEntity;
+import com.imgyh.mall.order.entity.PaymentInfoEntity;
 import com.imgyh.mall.order.enume.OrderStatusEnum;
 import com.imgyh.mall.order.feign.CartFeignService;
 import com.imgyh.mall.order.feign.MemberFeignService;
@@ -23,6 +25,7 @@ import com.imgyh.mall.order.feign.WareFeignService;
 import com.imgyh.mall.order.interceptor.OrderInterceptor;
 import com.imgyh.mall.order.service.OrderItemService;
 import com.imgyh.mall.order.service.OrderService;
+import com.imgyh.mall.order.service.PaymentInfoService;
 import com.imgyh.mall.order.to.OrderCreateTo;
 import com.imgyh.mall.order.vo.*;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -67,6 +70,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     OrderItemService orderItemService;
     @Autowired
     RabbitTemplate rabbitTemplate;
+    @Autowired
+    PaymentInfoService paymentInfoService;
 
 
     @Override
@@ -415,6 +420,65 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 //TODO 将没法送成功的消息进行重试发送。
             }
         }
+    }
+
+    // 订单支付页面
+    @Override
+    public PayVo getOrderPay(String orderSn) {
+        PayVo payVo = new PayVo();
+        OrderEntity order = this.getOne(new QueryWrapper<OrderEntity>().eq("order_sn", orderSn));
+
+
+        BigDecimal bigDecimal = order.getPayAmount().setScale(2, BigDecimal.ROUND_UP);
+        payVo.setTotal_amount(bigDecimal.toString());
+        payVo.setOut_trade_no(order.getOrderSn());
+
+        List<OrderItemEntity> order_sn = orderItemService.list(new QueryWrapper<OrderItemEntity>().eq("order_sn", orderSn));
+        OrderItemEntity entity = order_sn.get(0);
+
+
+        payVo.setSubject(entity.getSkuName());
+        payVo.setBody(entity.getSkuAttrsVals());
+        return payVo;
+    }
+
+    @Override
+    public List<OrderwithItemVo> listOrderItem() {
+        List<OrderEntity> orders = this.list(new QueryWrapper<OrderEntity>().eq("member_id", OrderInterceptor.loginUser.get().getId()).orderByDesc("id"));
+        List<OrderwithItemVo> list = orders.stream().map((order) -> {
+            OrderwithItemVo vo = new OrderwithItemVo();
+            BeanUtils.copyProperties(order, vo);
+            List<OrderItemEntity> items = orderItemService.list(new QueryWrapper<OrderItemEntity>().eq("order_sn", vo.getOrderSn()));
+            vo.setItems(items);
+            return vo;
+        }).collect(Collectors.toList());
+
+        return list;
+    }
+
+    // 处理支付宝的支付结果
+    @Override
+    public String handlePayResult(PayAsyncVo vo) {
+        //1、保存交易流水
+        PaymentInfoEntity infoEntity = new PaymentInfoEntity();
+        infoEntity.setAlipayTradeNo(vo.getTrade_no());
+        infoEntity.setOrderSn(vo.getOut_trade_no());
+        infoEntity.setPaymentStatus(vo.getTrade_status());
+        infoEntity.setCallbackTime(vo.getNotify_time());
+
+        paymentInfoService.save(infoEntity);
+
+        //2、修改订单的状态信息
+        if (vo.getTrade_status().equals("TRADE_SUCCESS") || vo.getTrade_status().equals("TRADE_FINISHED")) {
+            //支付成功状态
+            String outTradeNo = vo.getOut_trade_no();
+            // this.baseMapper.updateOrderStatus(outTradeNo,OrderStatusEnum.PAYED.getCode());
+            OrderEntity entity = new OrderEntity();
+            entity.setStatus(OrderStatusEnum.PAYED.getCode());
+            this.update(entity, new UpdateWrapper<OrderEntity>().eq("order_sn", outTradeNo));
+        }
+        return "success";
+
     }
 
 }

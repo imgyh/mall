@@ -4,6 +4,7 @@ import com.imgyh.mall.common.exception.NoStockException;
 import com.imgyh.mall.order.service.OrderService;
 import com.imgyh.mall.order.vo.OrderConfirmVo;
 import com.imgyh.mall.order.vo.OrderSubmitVo;
+import com.imgyh.mall.order.vo.OrderwithItemVo;
 import com.imgyh.mall.order.vo.SubmitOrderResponseVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -88,5 +90,13 @@ public class OrderWebController {
             }
             return "redirect:http://order.mall.gyh.im/toTrade";
         }
+    }
+
+    @GetMapping("list.html")
+    public String listOrder(Model model){
+        List<OrderwithItemVo> res = orderService.listOrderItem();
+        model.addAttribute("orders", res);
+
+        return "list";
     }
 }

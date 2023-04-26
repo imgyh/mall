@@ -13,7 +13,7 @@ spring:
       flush-mode: on_save # # 会话刷新模式
       namespace: spring:session # 用于存储会话的键的命名空间
   redis:
-    host: 127.0.0.1
+    host: ubuntu
     port: 6379
   # RabbitMQ配置
   rabbitmq:
