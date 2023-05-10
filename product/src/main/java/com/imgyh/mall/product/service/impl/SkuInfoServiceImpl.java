@@ -1,15 +1,19 @@
 package com.imgyh.mall.product.service.impl;
 
+import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.imgyh.mall.common.utils.PageUtils;
 import com.imgyh.mall.common.utils.Query;
+import com.imgyh.mall.common.utils.R;
 import com.imgyh.mall.product.dao.SkuInfoDao;
 import com.imgyh.mall.product.entity.SkuImagesEntity;
 import com.imgyh.mall.product.entity.SkuInfoEntity;
 import com.imgyh.mall.product.entity.SpuInfoDescEntity;
+import com.imgyh.mall.product.feign.SeckillFeignService;
 import com.imgyh.mall.product.service.*;
+import com.imgyh.mall.product.vo.SeckillInfoVo;
 import com.imgyh.mall.product.vo.SkuItemSaleAttrVo;
 import com.imgyh.mall.product.vo.SkuItemVo;
 import com.imgyh.mall.product.vo.SpuItemAttrGroupVo;
@@ -38,6 +42,8 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
     AttrGroupService attrGroupService;
     @Autowired
     ThreadPoolExecutor executor;
+    @Autowired
+    SeckillFeignService seckillFeignService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -131,11 +137,19 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
         }, executor);
 
 
-
+        //3、查询当前sku是否参与秒杀优惠
+        CompletableFuture<Void> secKillFuture = CompletableFuture.runAsync(() -> {
+            R seckillInfo = seckillFeignService.getSkuSeckillInfo(skuId);
+            if (seckillInfo.getCode() == 0) {
+                SeckillInfoVo seckillInfoVo = seckillInfo.getData(new TypeReference<SeckillInfoVo>() {
+                });
+                skuItemVo.setSeckillInfo(seckillInfoVo);
+            }
+        }, executor);
 
 
         // 等到所有任务都完成
-        CompletableFuture.allOf(saleAttrFuture,descFuture,baseAttrFuture,imageFuture).get();
+        CompletableFuture.allOf(saleAttrFuture,descFuture,baseAttrFuture,imageFuture,secKillFuture).get();
 
         return skuItemVo;
     }

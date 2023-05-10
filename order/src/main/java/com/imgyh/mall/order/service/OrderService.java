@@ -1,6 +1,7 @@
 package com.imgyh.mall.order.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.imgyh.mall.common.to.mq.SeckillOrderTo;
 import com.imgyh.mall.common.utils.PageUtils;
 import com.imgyh.mall.order.entity.OrderEntity;
 import com.imgyh.mall.order.vo.*;
@@ -31,5 +32,7 @@ public interface OrderService extends IService<OrderEntity> {
     List<OrderwithItemVo> listOrderItem();
 
     String handlePayResult(PayAsyncVo vo);
+
+    void createSeckillOrder(SeckillOrderTo seckillOrder);
 }
 

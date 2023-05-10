@@ -47,6 +47,12 @@ spring:
             - Path=/api/ware/**
           filters:
             - RewritePath=/api/?(?<segment>.*), /$\{segment}
+        - id: coupon
+          uri: lb://coupon # lb 负载均衡 需要添加 spring-cloud-loadbalancer
+          predicates:
+            - Path=/api/coupon/**
+          filters:
+            - RewritePath=/api/?(?<segment>.*), /$\{segment}
         - id: renren
           uri: lb://renren # lb 负载均衡 需要添加 spring-cloud-loadbalancer
           predicates:
@@ -73,3 +79,7 @@ spring:
           uri: lb://order # lb 负载均衡 需要添加 spring-cloud-loadbalancer
           predicates:
             - Host=order.mall.gyh.im
+        - id: seckill_route # 配置认证页路由, 搜索页页html写在order微服务中
+          uri: lb://seckill # lb 负载均衡 需要添加 spring-cloud-loadbalancer
+          predicates:
+            - Host=seckill.mall.gyh.im
